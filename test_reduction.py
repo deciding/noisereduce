@@ -1,8 +1,21 @@
+import numpy as np
 from scipy.io import wavfile
 import noisereduce as nr
 from noisereduce.generate_noise import band_limited_noise
 from noisereduce.utils import int16_to_float32, float32_to_int16
 
+
+def test_elon(ifile="002.wav", ofile='reduced2.wav'):
+    # load data
+    wav_loc = ifile
+    rate, data = wavfile.read(wav_loc)
+
+    # add noise
+    _, noise = wavfile.read("noise2.wav")
+    reduced = nr.reduce_noise(
+        y=data, sr=rate, y_noise = noise, stationary=True
+    )
+    wavfile.write(ofile, rate, reduced.astype(np.int16))
 
 def test_reduce_generated_noise_stationary_with_noise_clip():
     # load data
@@ -146,3 +159,6 @@ def test_reduce_cafe_noise_tf():
         verbose=True,
     )
     return float32_to_int16(reduced_noise)
+
+if __name__ == '__main__':
+    test_elon()
